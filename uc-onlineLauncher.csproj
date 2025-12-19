@@ -8,6 +8,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <AssemblyName>uc-onlineLauncher</AssemblyName>
     <OutputPath>uc\bin\$(Configuration)\x86\</OutputPath>
+    <StartupObject>uc_onlineLauncher.Program</StartupObject>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 

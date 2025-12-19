@@ -9,7 +9,7 @@ namespace uc_online
     public class uc_online : IDisposable
     {
         private bool _steamInitialized = false;
-        private uint _currentAppID = 480;
+        private uint _currentAppID;
         private IniConfig _config;
         private Logger _logger;
         private string _gameExecutable = "";
@@ -54,13 +54,24 @@ namespace uc_online
         [DllImport("steam_api", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr SteamApps();
 
+        [DllImport("steam_api", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr GetHSteamPipe();
+
         public bool Initializeuc_online()
         {
             try
             {
-                _logger.Log("Initializing Steam with AppID: " + _currentAppID);
-
-                CreateAppIdFile();
+                if (_currentAppID == 0)
+                {
+                    _logger.LogWarning("No AppID configured. Steam functionality may not work properly.");
+                    _logger.LogWarning("Please set AppID in config.ini or use SetCustomAppID() method.");
+                    _logger.LogWarning("Continuing without explicit AppID - Steam will use default behavior.");
+                }
+                else
+                {
+                    _logger.Log("Initializing Steam with AppID: " + _currentAppID);
+                    CreateAppIdFile();
+                }
 
                 LoadSteamApiDll();
 
@@ -74,7 +85,7 @@ namespace uc_online
                 _steamInitialized = true;
                 _logger.Log("Steam initialized successfully");
 
-                if (SteamClient() != IntPtr.Zero && SteamApps() != IntPtr.Zero)
+                if (InitializeSteamInterfaces())
                 {
                     _logger.Log("Steam interfaces accessible");
                 }
@@ -151,9 +162,13 @@ namespace uc_online
         public void SetCustomAppID(uint appID)
         {
             _currentAppID = appID;
+            _config.SetAppID(appID);
+            _config.SaveConfig();
+            _logger.Log($"AppID changed to: {appID}");
 
             if (_steamInitialized)
             {
+                _logger.Log("Reinitializing Steam with new AppID");
                 Shutdownuc_online();
                 Initializeuc_online();
             }
@@ -171,12 +186,19 @@ namespace uc_online
 
         private void CreateAppIdFile()
         {
+            if (_currentAppID == 0)
+            {
+                _logger.Log("Skipping steam_appid.txt creation - no AppID configured");
+                return;
+            }
+
             try
             {
                 using (StreamWriter writer = new StreamWriter("steam_appid.txt", false))
                 {
                     writer.Write(_currentAppID.ToString());
                 }
+                _logger.Log($"Created steam_appid.txt with AppID: {_currentAppID}");
             }
             catch (Exception ex)
             {
@@ -373,6 +395,43 @@ namespace uc_online
             _steamApiDllPath = dllPath;
             _config.SetSteamApiDllPath(dllPath);
             _config.SaveConfig();
+        }
+
+        private bool InitializeSteamInterfaces()
+        {
+            try
+            {
+                IntPtr steamClient = SteamClient();
+                if (steamClient == IntPtr.Zero)
+                {
+                    _logger.LogError("Failed to get Steam client");
+                    return false;
+                }
+
+                IntPtr hSteamPipe = GetHSteamPipe();
+                if (hSteamPipe == IntPtr.Zero)
+                {
+                    _logger.LogError("Failed to get HSteamPipe");
+                    return false;
+                }
+
+                IntPtr steamApps = SteamApps();
+                if (steamApps == IntPtr.Zero)
+                {
+                    _logger.LogWarning("SteamApps interface not available");
+                }
+                else
+                {
+                    _logger.Log("Successfully obtained SteamApps interface");
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogException(ex, "Error initializing Steam interfaces");
+                return false;
+            }
         }
 
         public void Dispose()

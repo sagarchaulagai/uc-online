@@ -8,6 +8,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <AssemblyName>uc-onlineLauncher64</AssemblyName>
     <OutputPath>uc\bin\$(Configuration)\x64\</OutputPath>
+    <StartupObject>uc_onlineLauncher.Program64</StartupObject>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
