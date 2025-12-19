@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="IniConfig.cs" />
   </ItemGroup>
 
 </Project>

@@ -18,5 +18,6 @@
 
   <ItemGroup>
     <Compile Include="Program64.cs" />
+    <Compile Include="IniConfig.cs" />
   </ItemGroup>
 </Project>
