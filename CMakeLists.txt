@@ -8,6 +8,9 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Suppress warnings for unsafe functions
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
 # Include directories
 include_directories(include)
 include_directories(sdk/public)
