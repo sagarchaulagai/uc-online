@@ -17,11 +17,11 @@ include_directories(sdk/public)
 
 # 32-bit version
 add_executable(uc-online src/main.cpp src/uc_online.cpp src/ini_config.cpp src/logger.cpp src/resources.rc)
-target_link_libraries(uc-online PRIVATE ${CMAKE_SOURCE_DIR}/sdk/redistributable_bin/steam_api.lib kernel32)
-
+target_link_libraries(uc-online PRIVATE ${CMAKE_SOURCE_DIR}/sdk/redistributable_bin/32/steam_api.lib kernel32)
+target_compile_definitions(uc-online PRIVATE IS_32BIT)
 # 64-bit version
 add_executable(uc-online64 src/main64.cpp src/uc_online64.cpp src/ini_config.cpp src/logger.cpp src/resources.rc)
-target_link_libraries(uc-online64 PRIVATE ${CMAKE_SOURCE_DIR}/sdk/redistributable_bin/steam_api64.lib kernel32)
+target_link_libraries(uc-online64 PRIVATE ${CMAKE_SOURCE_DIR}/sdk/redistributable_bin/64/steam_api64.lib kernel32)
 target_compile_definitions(uc-online64 PRIVATE IS_64BIT)
 
 # Copy config.ini if it exists
