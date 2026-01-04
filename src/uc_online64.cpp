@@ -48,7 +48,7 @@ bool UCOnline64::InitializeUCOnline() {
             return false;
         }
 
-        char errorMsg[1024] = {0};
+        SteamErrMsg errorMsg;
         if (SteamAPI_InitEx(&errorMsg) != k_ESteamAPIInitResult_OK) {
             std::cout << "SteamAPI_InitEx failed: " << errorMsg << std::endl;
             return false;

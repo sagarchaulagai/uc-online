@@ -43,8 +43,8 @@ bool UCOnline::InitializeUCOnline() {
             return false;
         }
 
-        char errorMsg[1024] = {0};
-        if (SteamAPI_InitEx(errorMsg) != k_ESteamAPIInitResult_OK) {
+        SteamErrMsg errorMsg;
+        if (SteamAPI_InitEx(&errorMsg) != k_ESteamAPIInitResult_OK) {
             _logger->Log("SteamAPI_InitEx failed: " + std::string(errorMsg));
             return false;
         }
