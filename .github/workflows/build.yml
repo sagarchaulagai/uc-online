@@ -3,8 +3,6 @@ name: Build C++ Version
 on:
   push:
     branches: [ windows-c++ ]
-  pull_request:
-    branches: [ windows-c++ ]
 
 jobs:
   build:
