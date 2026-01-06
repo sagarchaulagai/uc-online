@@ -43,11 +43,6 @@ bool UCOnline64::InitializeUCOnline() {
             return false;
         }
 
-        if (!InitializeSteamInterfaces()) {
-            std::cout << "Failed to initialize Steam interfaces" << std::endl;
-            return false;
-        }
-
         SteamErrMsg errorMsg;
         if (SteamAPI_InitEx(&errorMsg) != k_ESteamAPIInitResult_OK) {
             std::cout << "SteamAPI_InitEx failed: " << errorMsg << std::endl;
@@ -56,6 +51,12 @@ bool UCOnline64::InitializeUCOnline() {
 
         _steamInitialized = true;
         _logger->Log("Steam initialized successfully");
+
+        if (InitializeSteamInterfaces()) {
+            _logger->Log("Steam interfaces accessible");
+        } else {
+            _logger->LogWarning("Steam interfaces not accessible");
+        }
 
         return true;
     } catch (const std::exception& ex) {
